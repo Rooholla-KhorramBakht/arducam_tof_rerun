@@ -1,137 +1,38 @@
-# Arducam Depth Camera
+# Arducam ToF Rerun Example
+<p align="center">
+  <img src="docs/openFigure.png" alt="image" width="75%" height="auto"/>
+</p>
 
 ## Overview
 
-This project is a use example based on arducam's depth camera. It includes basic image rendering using opencv, displaying 3D point clouds using PCL, and publishing depth camera data through the ROS2 system.
-The depth camera is the depth data obtained by calculating the phase difference based on the transmitted modulated pulse. The resolution of the camera is 240*180. Currently, it has two range modes: 2 meters and 4 meters. The measurement error is within 2 cm.
-The depth camera supports CSI and USB two connection methods, and needs an additional 5V 2A current power supply for the camera.
+This project is a simple Python example that reads the depth images from the Arducam ToF camera, computes the corresponding pointcloud, and visualizes them using the rerun.io software. The IMX316 camera chip on the module obtains the depth by calculating the phase difference between transmitted modulated pulses. The resolution of the camera is 240*180. Currently, it has two range modes: 2 meters and 4 meters. The measurement error is within 2 cm. The depth camera supports CSI and USB but in this example, we use a Raspberry Pi 4 to communicate with it (CSI).
 
-## Quick Start
+## Installation
+We assume the camera is physically connected to the Raspberry Pi as explained [here](https://docs.arducam.com/Raspberry-Pi-Camera/Tof-camera/Getting-Started/).
 
 ### Clone this repository
-
-Clone this repository and enter the directory.
-
-```shell
-  git clone https://github.com/ArduCAM/Arducam_tof_camera.git
-  cd Arducam_tof_camera
-```
-
-### Install dependencies for Raspberry Pi
-
-> Run in the Arducam_tof_camera folder
-> Whatever you want to run the C/C++ examples or Python examples, you need to install the dependencies.
+Clone this repository and enter the directory:
 
 ```shell
-  ./Install_dependencies.sh
+  git https://github.com/Rooholla-KhorramBakht/arducam_tof_rerun.git
+  cd arducam_tof_rerun
+  ./Install_dependencies_pi.sh
+```
+After rebooting the board, make sure the camera is recognized by running the following command:
+
+```bash
+dmesg | grep arducam
+```
+If successful, you should see:
+```bash
+[   11.516708] arducam-pivariety 10-000c: firmware version: 0x10002
+[   12.122025] arducam-pivariety 10-000c: Consider updating driver arducam-pivariety to match on endpoints
+```
+Finally, install the Python library needed for communicating with the camera:
+```bash
+pip3 install rerun-sdk ArducamDepthCamera opencv-python "numpy<2.0.0"
 ```
 
-> Run the setup_rock_5a.sh if on rock 5a platform.
+## Rerun Visualization Example
+Go through the notebook [rerun_visulizer.ipynb](notebooks/rerun_visulizer.ipynb) to see how to read the camera in python and send the output to the rerun visualizer in real-time!
 
-```shell
-  ./setup_rock_5a.sh
-```
-
-### Install dependencies for Jetson
-
-> Run in the Arducam_tof_camera folder
-> Whatever you want to run the C/C++ examples or Python examples, you need to install the dependencies.
-
-```shell
-  ./Install_dependencies_jetson.sh
-```
-
-## Run Examples
-
-> Platform: Raspberry Pi or Jetson
-
-### Depth Examples
-
-#### Python
-
-##### Run
-
-###### Python Example
-
-> Run in the example/python folder
-
-```shell
-  cd example/python
-```
-
-```shell
-  python3 preview_depth.py
-  #or
-  python3 capture_raw.py
-```
-
-#### C/C++
-
-##### Compile
-
-> Run in the Arducam_tof_camera folder
-
-```shell
-  ./compile.sh
-```
-
-##### Run
-
-###### C Example
-
-> Run in the build/example/c folder
-
-```shell
-  cd build/example/c
-```
-
-```shell
-  ./preview_depth_c
-```
-
-###### C++ Example
-
-> Run in the build/example/cpp folder
-
-```shell
-  cd build/example/cpp
-```
-
-```shell
-  ./preview_depth
-  #or
-  ./capture_raw
-```
-
-### Point Cloud Examples
-
-<!-- #### Python -->
-
-#### C/C++
-
-##### Dependencies
-
-```Shell
-  sudo apt update
-  sudo apt-get install libopen3d-dev 
-```
-
-##### Compile
-
-> Run in the Arducam_tof_camera folder
-
-```shell
-  ./compile_pointcloud.sh
-```
-
-##### Run
-
-> Run in the build/open3d_preview folder
-
-```shell
-  cd build/open3d_preview
-```
-
-```shell
-  ./preview_pointcloud
-```
